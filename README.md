@@ -1,4 +1,4 @@
-# Go Proxy Application
+ # 🌐 Go Proxy Application
 
 This is a Go-based proxy server application that provides various API endpoints and web interfaces.
 
