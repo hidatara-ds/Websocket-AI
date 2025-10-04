@@ -18,7 +18,7 @@ func CORSMiddleware() Middleware {
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate")
 			w.Header().Set("Pragma", "no-cache")
-			w.Header.Set("Expires", "0")
+			w.Header().Set("Expires", "0")
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusNoContent)
