@@ -24,19 +24,35 @@ Aplikasi menggunakan **Proxy Pattern** dengan elemen **MVC (Model-View-Controlle
 
 ```
 websocket-ai/
-├── proxy/                   # WebSocket proxy ke Vertex AI
-│   └── proxy.go            # Main proxy server (Port 8081)
-├── server/                  # Static file server
-│   └── server.go              # File server (Port 8080)
-├── templates/               # Frontend files
-│   ├── index.html          # Main interface
-│   ├── assets/             # Images dan assets
-│   └── static/             # JavaScript modules
-│       ├── audio-recorder.js
-│       ├── tools/
-│       │   ├── stock-api.js
-│       │   └── weather-api.js
-│       └── utils.js
+├── cmd/                     # Entry points aplikasi
+│   ├── ai-gateway/         # WebSocket proxy ke Vertex AI (Port 8081)
+│   │   ├── main.go
+│   │   └── ai-gateway.exe   # Compiled binary
+│   └── static-server/      # Static file server (Port 8080)
+│       ├── main.go
+│       └── static-server.exe # Compiled binary
+├── internal/               # Internal packages (business logic)
+│   ├── gateway/            # AI gateway logic
+│   │   ├── websocket.go    # WebSocket handlers
+│   │   └── vertex_ai.go    # Vertex AI integration
+│   ├── server/             # Static server logic
+│   │   └── static.go       # CORS & static file handling
+│   └── models/             # Data structures
+│       └── message.go      # WebSocket message models
+├── web/                    # Frontend files
+│   ├── templates/          # HTML templates
+│   │   ├── index.html      # Main interface
+│   │   ├── assets/         # Images dan assets
+│   │   └── static/         # JavaScript modules
+│   │       ├── audio-recorder.js
+│   │       ├── tools/
+│   │       │   ├── stock-api.js
+│   │       │   └── weather-api.js
+│   │       └── utils.js
+│   ├── static/             # Static assets
+│   └── assets/             # Images dan media
+├── run.bat                 # Windows runner script
+├── run.sh                  # Linux/Mac runner script
 ├── go.mod
 ├── go.sum
 └── README.md
@@ -69,17 +85,28 @@ websocket-ai/
    ```
 
 4. **Jalankan aplikasi**
+
+   **Cara Mudah (Recommended):**
+   ```bash
+   # Windows
+   run.bat
+   
+   # Linux/Mac
+   ./run.sh
+   ```
+
+   **Cara Manual:**
    
    **Terminal 1 - Static File Server:**
    ```bash
-   cd server
-   go run server.go
+   cd cmd/static-server
+   go run main.go
    ```
    
-   **Terminal 2 - WebSocket Proxy:**
+   **Terminal 2 - AI Gateway:**
    ```bash
-   cd proxy
-   go run proxy.go
+   cd cmd/ai-gateway
+   go run main.go
    ```
 
 5. **Akses aplikasi**
@@ -146,19 +173,63 @@ const OPENWEATHER_API_KEY = 'your-openweather-api-key';
 
 ## 🛠️ Development
 
-### Struktur yang Disarankan untuk Refactoring
+### 📋 Perubahan Struktur (v2.0)
+
+**Sebelum (Struktur Lama):**
 ```
 websocket-ai/
-├── cmd/
-│   ├── ai-gateway/          # WebSocket proxy ke Vertex AI
-│   └── static-server/      # Static file server
-├── internal/
-│   ├── gateway/             # AI gateway logic
-│   ├── server/              # Static server logic
-│   └── models/              # Data structures
-├── web/                     # Frontend files
-└── config/                  # Configuration files
+├── proxy/                   # ❌ Nama membingungkan
+│   └── proxy.go            # ❌ Tidak jelas fungsinya
+├── server/                  # ❌ Nama membingungkan  
+│   └── server.go           # ❌ Tidak jelas fungsinya
+└── templates/               # ❌ Struktur tidak terorganisir
 ```
+
+**Sesudah (Struktur Baru):**
+```
+websocket-ai/
+├── cmd/                     # ✅ Entry points yang jelas
+│   ├── ai-gateway/         # ✅ WebSocket proxy ke Vertex AI
+│   └── static-server/      # ✅ Static file server
+├── internal/               # ✅ Internal packages
+│   ├── gateway/            # ✅ AI gateway logic
+│   ├── server/             # ✅ Static server logic
+│   └── models/             # ✅ Data structures
+└── web/                    # ✅ Frontend files
+```
+
+### ✅ Keuntungan Struktur Baru
+
+1. **Penamaan Jelas**: 
+   - `ai-gateway` vs `proxy` - lebih jelas fungsinya
+   - `static-server` vs `server` - lebih jelas fungsinya
+
+2. **Organisasi Lebih Baik**:
+   - `cmd/` untuk entry points
+   - `internal/` untuk business logic
+   - `web/` untuk frontend files
+
+3. **Separation of Concerns**:
+   - Gateway logic terpisah dari main
+   - Models terpisah dari business logic
+   - Static server logic terpisah
+
+4. **Mudah Dikembangkan**:
+   - Struktur mengikuti Go best practices
+   - Import paths yang jelas
+   - Package dependencies yang terorganisir
+
+### 🔧 Script Runner
+
+Aplikasi menyediakan script runner untuk kemudahan:
+
+- **Windows**: `run.bat` - Double-click untuk menjalankan kedua server
+- **Linux/Mac**: `run.sh` - `./run.sh` untuk menjalankan kedua server
+
+Script ini akan:
+1. Menjalankan Static File Server di port 8080
+2. Menjalankan AI Gateway di port 8081
+3. Menampilkan URL akses aplikasi
 
 ## 📄 License
 
