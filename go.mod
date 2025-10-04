@@ -1,4 +1,4 @@
-module proxy
+module websocket-ai
 
 go 1.24.1
 
